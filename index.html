@@ -32,11 +32,39 @@ let asignatura = "";
 
 let scanner = new Html5Qrcode("reader");
 
-
-// 🔴🔴🔴 AQUÍ ES DONDE TIENES QUE PEGAR TU URL DE APPS SCRIPT
+// 🔴 TU URL DE APPS SCRIPT
 const API_URL = "https://script.google.com/macros/s/AKfycbxjrtzDbpp9wafMDeY_9liAO1I01ZXN2t2locPZrWw185QGIiookru2zmH-q2Lctp6v/exec";
 
 
+// 🔧 FUNCIÓN CLAVE: limpia QR (texto o URL)
+function extraerCodigo(text) {
+
+  text = text.trim();
+
+  if (text.includes("http")) {
+
+    try {
+      const url = new URL(text);
+
+      const data =
+        url.searchParams.get("data") ||
+        url.searchParams.get("alumno") ||
+        url.searchParams.get("id");
+
+      if (data) return data.toUpperCase();
+
+      return url.pathname.split("/").pop().toUpperCase();
+
+    } catch (e) {
+      return text.toUpperCase();
+    }
+  }
+
+  return text.toUpperCase();
+}
+
+
+// 🔴 SCANNER
 function startScan(callback) {
 
   scanner.start(
@@ -51,26 +79,32 @@ function startScan(callback) {
   );
 }
 
+
+// 👤 ALUMNO
 function scanAlumno() {
   startScan((text) => {
 
-    alumno = text.trim().toUpperCase();
+    alumno = extraerCodigo(text);
 
     document.getElementById("estado").innerText =
       "Alumno: " + alumno;
   });
 }
 
+
+// 📚 ASIGNATURA
 function scanAsignatura() {
   startScan((text) => {
 
-    asignatura = text.trim().toUpperCase();
+    asignatura = extraerCodigo(text);
 
     document.getElementById("estado").innerText =
       "Alumno: " + alumno + " | Asignatura: " + asignatura;
   });
 }
 
+
+// 🚀 ENVIAR
 function enviar() {
 
   if (!alumno || !asignatura) {
@@ -82,16 +116,13 @@ function enviar() {
     + "?alumno=" + encodeURIComponent(alumno)
     + "&asignatura=" + encodeURIComponent(asignatura);
 
-  fetch(url)
-    .then(r => r.text())
-    .then(text => {
-      alert("RESPUESTA: " + text);
-      console.log(text);
-    })
-    .catch(err => {
-      alert("ERROR FETCH");
-      console.log(err);
-    });
+  fetch(url, { mode: "no-cors" });
+
+  alert("Enviado");
+
+  alumno = "";
+  asignatura = "";
+  document.getElementById("estado").innerText = "Listo";
 }
 
 </script>
