@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banco de libros</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body { font-family: Arial; text-align:center; padding:20px; }
+    #reader { width:300px; margin:auto; }
+    button { margin:10px; padding:10px; }
+  </style>
+</head>
+
+<body>
+
+<h2>📚 Banco de libros</h2>
+
+<p id="estado">Listo</p>
+
+<div id="reader"></div>
+
+<button onclick="scanAlumno()">Escanear alumno</button>
+<button onclick="scanAsignatura()">Escanear asignatura</button>
+<button onclick="enviar()">Registrar</button>
+
+<script>
+
+let alumno = "";
+let asignatura = "";
+
+let scanner = new Html5Qrcode("reader");
+
+// 🔴 PON AQUÍ TU URL REAL DE APPS SCRIPT
+const API_URL = "https://script.google.com/macros/s/XXXXX/exec";
+
+function startScan(callback) {
+
+  scanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    (text) => {
+
+      scanner.stop();
+
+      callback(text);
+    }
+  );
+}
+
+function scanAlumno() {
+  startScan((text) => {
+    alumno = text;
+    document.getElementById("estado").innerText =
+      "Alumno: " + alumno;
+  });
+}
+
+function scanAsignatura() {
+  startScan((text) => {
+    asignatura = text;
+    document.getElementById("estado").innerText =
+      "Alumno: " + alumno + " | Asignatura: " + asignatura;
+  });
+}
+
+function enviar() {
+
+  if (!alumno || !asignatura) {
+    alert("Faltan datos");
+    return;
+  }
+
+  fetch(API_URL + "?alumno=" + alumno + "&asignatura=" + asignatura)
+    .then(r => r.text())
+    .then(r => {
+      alert(r);
+
+      alumno = "";
+      asignatura = "";
+      document.getElementById("estado").innerText = "Listo";
+    });
+}
+
+</script>
+
+</body>
+</html>
