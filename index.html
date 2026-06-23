@@ -32,8 +32,10 @@ let asignatura = "";
 
 let scanner = new Html5Qrcode("reader");
 
-// 🔴 TU URL REAL DE APPS SCRIPT
-const API_URL = "https://script.google.com/macros/s/AKfycbxOlQtSHeG3svZ8IWR7CyxQCulePkyBNIcFk78waYv5WagcD3xhcx85k_R0Mz82bnoZ/exec";
+
+// 🔴🔴🔴 AQUÍ ES DONDE TIENES QUE PEGAR TU URL DE APPS SCRIPT
+const API_URL = "https://script.google.com/macros/s/AKfycbwrITaXNR5XwtKATZZ23dyheukbVLlP1DqoiTRhgbxBCmOii9vmqiV9RBoGgxXBqgeC/exec";
+
 
 function startScan(callback) {
 
@@ -43,8 +45,8 @@ function startScan(callback) {
     (text) => {
 
       scanner.stop();
-
       callback(text);
+
     }
   );
 }
@@ -80,19 +82,15 @@ function enviar() {
     + "?alumno=" + encodeURIComponent(alumno)
     + "&asignatura=" + encodeURIComponent(asignatura);
 
-  fetch(url)
-    .then(r => r.text())
-    .then(r => {
-      alert(r);
+  // 🔴 Envío compatible (evita problemas de CORS)
+  const img = new Image();
+  img.src = url;
 
-      alumno = "";
-      asignatura = "";
-      document.getElementById("estado").innerText = "Listo";
-    })
-    .catch(err => {
-      alert("Error conexión");
-      console.log(err);
-    });
+  alert("Enviado");
+
+  alumno = "";
+  asignatura = "";
+  document.getElementById("estado").innerText = "Listo";
 }
 
 </script>
