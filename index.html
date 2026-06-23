@@ -82,15 +82,16 @@ function enviar() {
     + "?alumno=" + encodeURIComponent(alumno)
     + "&asignatura=" + encodeURIComponent(asignatura);
 
-  // 🔴 Envío compatible (evita problemas de CORS)
-  const img = new Image();
-  img.src = url;
-
-  alert("Enviado");
-
-  alumno = "";
-  asignatura = "";
-  document.getElementById("estado").innerText = "Listo";
+  fetch(url)
+    .then(r => r.text())
+    .then(text => {
+      alert("RESPUESTA: " + text);
+      console.log(text);
+    })
+    .catch(err => {
+      alert("ERROR FETCH");
+      console.log(err);
+    });
 }
 
 </script>
